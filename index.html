@@ -7,121 +7,181 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0b1221;
-      --panel: #0f172a;
-      --border: #1f2937;
+      --bg: #070c16;
+      --bg-soft: #0c1527;
+      --panel: rgba(17, 26, 43, 0.85);
+      --border: rgba(148, 163, 184, 0.16);
+      --border-strong: rgba(56, 189, 248, 0.35);
       --accent: #38bdf8;
       --accent-strong: #0ea5e9;
       --fg: #e5e7eb;
       --subtle: #94a3b8;
+      --muted-strong: #cbd5e1;
       --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 2px 16px rgba(14, 165, 233, 0.15);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.08), transparent 35%),
-                  radial-gradient(circle at 80% 10%, rgba(14,165,233,0.08), transparent 30%),
-                  linear-gradient(145deg, #0b1221 0%, #0a1020 100%);
+      background:
+        radial-gradient(900px at 20% 20%, rgba(56, 189, 248, 0.15), transparent 45%),
+        radial-gradient(700px at 80% 0%, rgba(14, 165, 233, 0.14), transparent 40%),
+        linear-gradient(135deg, #040811 0%, #0b1221 50%, #091123 100%);
       color: var(--fg);
-      padding: 32px;
+      padding: 36px;
       display: flex;
       justify-content: center;
+      -webkit-font-smoothing: antialiased;
     }
-    .shell { width: 100%; display: flex; flex-direction: column; gap: 24px; }
+    .shell {
+      width: 100%;
+      max-width: 1180px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
     header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-    h1 { margin: 0; font-size: 24px; letter-spacing: 0.5px; }
-    .pill { border: 1px solid var(--border); color: var(--subtle); padding: 6px 10px; border-radius: 999px; font-size: 13px; }
-    .grid { display: flex; flex-direction: column; gap: 16px; }
-    .card {
-      background: linear-gradient(180deg, #0f172a 0%, #0b1426 100%);
+    h1 { margin: 0; font-size: 26px; letter-spacing: 0.6px; color: var(--muted-strong); }
+    .pill {
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 14px 45px rgba(0, 0, 0, 0.45);
+      color: var(--subtle);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      background: linear-gradient(120deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.08));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .grid { display: flex; flex-direction: column; gap: 18px; }
+    .layout-top {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+      width: 100%;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.92), rgba(10, 16, 32, 0.9));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
       gap: 12px;
       width: 100%;
+      backdrop-filter: blur(12px);
     }
-    .card header { display: flex; align-items: center; justify-content: space-between; }
-    .card h2 { margin: 0; font-size: 16px; color: #e2e8f0; }
+    .card header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card h2 { margin: 0; font-size: 16px; color: #e2e8f0; letter-spacing: 0.3px; }
     textarea {
       width: 100%;
       min-height: 280px;
       resize: vertical;
-      padding: 12px;
-      border-radius: 12px;
+      padding: 14px;
+      border-radius: 14px;
       border: 1px solid var(--border);
-      background: #0a1020;
+      background: linear-gradient(145deg, rgba(10, 16, 32, 0.95), rgba(13, 22, 41, 0.85));
       color: var(--fg);
       font-family: var(--mono);
       font-size: 14px;
-      line-height: 1.5;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      line-height: 1.55;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
-    textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25); }
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22);
+      transform: translateY(-1px);
+    }
     .output {
       min-height: 280px;
       padding: 16px;
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px solid var(--border);
-      background: #0a1020;
+      background: linear-gradient(160deg, rgba(10, 16, 32, 0.95), rgba(11, 19, 35, 0.9));
       color: var(--fg);
       font-size: 16px;
       line-height: 1.7;
       overflow: auto;
       white-space: pre-wrap;
       word-break: break-word;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      flex: 1;
+      min-height: 0;
     }
     .output.empty { color: var(--subtle); }
-    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
     button {
       border: 1px solid var(--border);
-      background: #11182c;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.2));
       color: var(--fg);
-      padding: 8px 12px;
-      border-radius: 10px;
+      padding: 9px 13px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 14px;
+      font-weight: 600;
       display: inline-flex;
       gap: 6px;
       align-items: center;
-      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 30px rgba(14, 165, 233, 0.18);
     }
-    button:hover { border-color: var(--accent); background: #0c172d; transform: translateY(-1px); }
+    button:hover {
+      border-color: var(--border-strong);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.32), rgba(14, 165, 233, 0.3));
+      transform: translateY(-1px);
+      box-shadow: 0 14px 36px rgba(14, 165, 233, 0.22);
+    }
+    button:active { transform: translateY(0); box-shadow: 0 6px 18px rgba(14, 165, 233, 0.15); }
     .muted { color: var(--subtle); font-size: 13px; }
     .status { font-size: 13px; color: var(--subtle); }
     .tools { display: flex; flex-direction: column; gap: 12px; }
     .toggles { display: flex; gap: 12px; flex-wrap: wrap; }
-    .toggles label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--subtle); cursor: pointer; }
-    .stats { font-size: 13px; color: var(--subtle); }
+    .toggles label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--subtle); cursor: pointer; padding: 6px 10px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255, 255, 255, 0.02); }
+    .stats { font-size: 13px; color: var(--muted-strong); }
     .snippets { display: flex; flex-wrap: wrap; gap: 8px; }
     .chip {
       border-radius: 999px;
-      padding: 6px 10px;
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 7px 11px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.4);
       color: #e0f2fe;
       font-size: 13px;
       cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 8px 22px rgba(56, 189, 248, 0.18);
     }
-    .chip:hover { transform: translateY(-1px); border-color: var(--accent); }
+    .chip:hover { transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 10px 26px rgba(56, 189, 248, 0.22); }
     .dropzone {
       border: 1px dashed var(--border);
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: 14px;
+      padding: 14px;
       text-align: center;
       color: var(--subtle);
-      background: rgba(56, 189, 248, 0.04);
-      transition: border-color 0.2s ease, background 0.2s ease;
+      background: rgba(56, 189, 248, 0.05);
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.12s ease;
     }
-    .dropzone.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.08); color: #e0f2fe; }
+    .dropzone.active {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.1);
+      color: #e0f2fe;
+      transform: translateY(-1px);
+    }
+    .input-card textarea { flex: 1; min-height: 60vh; }
+    .output-card .output { min-height: 60vh; }
+    @media (max-width: 1024px) {
+      .layout-top { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 800px) {
+      body { padding: 24px; }
+      .shell { gap: 18px; }
+    }
     @media (max-width: 640px) {
-      body { padding: 20px; }
-      .shell { gap: 16px; }
-      textarea, .output { min-height: 220px; }
+      body { padding: 18px; }
+      .input-card textarea, .output-card .output { min-height: 240px; }
     }
   </style>
   <script>
@@ -144,51 +204,52 @@
     </header>
 
     <div class="grid">
-      <div class="card" aria-label="Ввод LaTeX">
-        <header>
-          <h2>Ввод</h2>
-          <span class="status" id="status">Готово</span>
-        </header>
-        <textarea id="input" spellcheck="false" placeholder="Вставь или напиши LaTeX..."></textarea>
-        <div class="actions">
-          <button id="clearBtn">Очистить</button>
-          <button id="copyBtn">Скопировать текст</button>
-          <button id="sampleBtn">Пример</button>
-          <button id="renderBtn">Рендер</button>
+      <div class="layout-top">
+        <div class="card card-main input-card" aria-label="Ввод LaTeX">
+          <header>
+            <h2>Ввод</h2>
+            <span class="status" id="status">Готово</span>
+          </header>
+          <textarea id="input" spellcheck="false" placeholder="Вставь или напиши LaTeX..."></textarea>
+          <div class="actions">
+            <button id="clearBtn">Очистить</button>
+            <button id="copyBtn">Скопировать текст</button>
+            <button id="sampleBtn">Пример</button>
+            <button id="renderBtn">Рендер</button>
+          </div>
+        </div>
+
+        <div class="card tools-card" aria-label="Инструменты">
+          <header>
+            <h2>Инструменты</h2>
+            <span class="status muted" id="autosaveState">Автосохранение: вкл</span>
+          </header>
+          <div class="tools">
+            <div class="toggles">
+              <label><input type="checkbox" id="autoRender" checked /> Авто-рендер</label>
+              <label><input type="checkbox" id="autoSave" checked /> Автосохранение</label>
+            </div>
+            <div class="stats" id="stats">0 строк • 0 символов</div>
+            <div class="actions">
+              <button id="downloadTex">Скачать .tex</button>
+              <button id="downloadTxt">Скачать .txt</button>
+              <button id="copyRendered">Скопировать вывод</button>
+              <button id="loadFile">Загрузить файл</button>
+              <input id="fileInput" type="file" accept=".tex,.txt,text/plain" hidden />
+            </div>
+            <div class="snippets" id="snippets"></div>
+            <div class="dropzone" id="dropzone">Перетащи .tex или .txt сюда</div>
+          </div>
         </div>
       </div>
 
-      <div class="card" aria-label="Результат">
+      <div class="card card-main output-card" aria-label="Результат">
         <header>
           <h2>Вывод</h2>
           <span class="status muted" id="renderState">Пусто</span>
         </header>
         <div id="output" class="output empty" aria-live="polite"></div>
       </div>
-
-      <div class="card" aria-label="Инструменты">
-        <header>
-          <h2>Инструменты</h2>
-          <span class="status muted" id="autosaveState">Автосохранение: вкл</span>
-        </header>
-        <div class="tools">
-          <div class="toggles">
-            <label><input type="checkbox" id="autoRender" checked /> Авто-рендер</label>
-            <label><input type="checkbox" id="autoSave" checked /> Автосохранение</label>
-          </div>
-          <div class="stats" id="stats">0 строк • 0 символов</div>
-          <div class="actions">
-            <button id="downloadTex">Скачать .tex</button>
-            <button id="downloadTxt">Скачать .txt</button>
-            <button id="copyRendered">Скопировать вывод</button>
-            <button id="loadFile">Загрузить файл</button>
-            <input id="fileInput" type="file" accept=".tex,.txt,text/plain" hidden />
-          </div>
-          <div class="snippets" id="snippets"></div>
-          <div class="dropzone" id="dropzone">Перетащи .tex или .txt сюда</div>
-        </div>
-      </div>
-
     </div>
 
     <span class="muted">MathJax рендерит формулы прямо в браузере, ничего не отправляется на сервер.</span>
