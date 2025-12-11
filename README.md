@@ -7,9 +7,6 @@
 
 ## Быстрый старт
 ```bash
-cd ~/Documents/school/latextotext
-# вариант 1: просто открыть файл
-open index.html
 # вариант 2: локальный статический сервер (чтобы обойти CORS на некоторых браузерах)
 python3 -m http.server 8000
 # затем открыть http://localhost:8000/index.html
