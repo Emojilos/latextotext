@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LaTeX → Text</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1221;
+      --panel: #0f172a;
+      --border: #1f2937;
+      --accent: #38bdf8;
+      --accent-strong: #0ea5e9;
+      --fg: #e5e7eb;
+      --subtle: #94a3b8;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.08), transparent 35%),
+                  radial-gradient(circle at 80% 10%, rgba(14,165,233,0.08), transparent 30%),
+                  linear-gradient(145deg, #0b1221 0%, #0a1020 100%);
+      color: var(--fg);
+      padding: 32px;
+      display: flex;
+      justify-content: center;
+    }
+    .shell { width: 100%; display: flex; flex-direction: column; gap: 24px; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    h1 { margin: 0; font-size: 24px; letter-spacing: 0.5px; }
+    .pill { border: 1px solid var(--border); color: var(--subtle); padding: 6px 10px; border-radius: 999px; font-size: 13px; }
+    .grid { display: flex; flex-direction: column; gap: 16px; }
+    .card {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1426 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 14px 45px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    .card header { display: flex; align-items: center; justify-content: space-between; }
+    .card h2 { margin: 0; font-size: 16px; color: #e2e8f0; }
+    textarea {
+      width: 100%;
+      min-height: 280px;
+      resize: vertical;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #0a1020;
+      color: var(--fg);
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.5;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25); }
+    .output {
+      min-height: 280px;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #0a1020;
+      color: var(--fg);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .output.empty { color: var(--subtle); }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    button {
+      border: 1px solid var(--border);
+      background: #11182c;
+      color: var(--fg);
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    button:hover { border-color: var(--accent); background: #0c172d; transform: translateY(-1px); }
+    .muted { color: var(--subtle); font-size: 13px; }
+    .status { font-size: 13px; color: var(--subtle); }
+    .divider-widget {
+      position: fixed;
+      bottom: 72px;
+      right: 24px;
+      width: min(340px, calc(100vw - 32px));
+      background: linear-gradient(180deg, #0f172a 0%, #0b1426 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.5);
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 10;
+    }
+    .divider-widget.open { display: flex; }
+    .divider-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 24px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #11182c;
+      color: var(--fg);
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 11;
+    }
+    .divider-toggle:hover { border-color: var(--accent); background: #0c172d; transform: translateY(-1px); }
+    .divider-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .divider-row label { font-size: 12px; color: var(--subtle); }
+    .divider-row input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #0a1020;
+      color: var(--fg);
+      font-family: var(--mono);
+      font-size: 14px;
+    }
+    .divider-row input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25); }
+    .divider-result {
+      background: #0a1020;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      color: var(--fg);
+      font-family: var(--mono);
+      font-size: 14px;
+      white-space: pre;
+      min-height: 140px;
+    }
+    @media (max-width: 640px) {
+      body { padding: 20px; }
+      .shell { gap: 16px; }
+      textarea, .output { min-height: 220px; }
+    }
+  </style>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <h1>LaTeX → Нормальный текст</h1>
+      <span class="pill">Живой рендер • Темная тема</span>
+    </header>
+
+    <div class="grid">
+      <div class="card" aria-label="Ввод LaTeX">
+        <header>
+          <h2>Ввод</h2>
+          <span class="status" id="status">Готово</span>
+        </header>
+        <textarea id="input" spellcheck="false" placeholder="Вставь или напиши LaTeX..."></textarea>
+        <div class="actions">
+          <button id="clearBtn">Очистить</button>
+          <button id="copyBtn">Скопировать текст</button>
+          <button id="sampleBtn">Пример</button>
+        </div>
+      </div>
+
+      <div class="card" aria-label="Результат">
+        <header>
+          <h2>Вывод</h2>
+          <span class="status muted" id="renderState">Пусто</span>
+        </header>
+        <div id="output" class="output empty" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <span class="muted">MathJax рендерит формулы прямо в браузере, ничего не отправляется на сервер.</span>
+  </div>
+
+  <button class="divider-toggle" id="dividerToggle" aria-expanded="false">Деление</button>
+
+  <div class="divider-widget" id="dividerWidget" aria-label="Быстрое деление уголком">
+    <h3>Деление уголком</h3>
+    <div class="divider-row">
+      <label for="dividend">Делимое</label>
+      <input id="dividend" type="number" inputmode="numeric" placeholder="Напр. 1287" />
+    </div>
+    <div class="divider-row">
+      <label for="divisor">Делитель</label>
+      <input id="divisor" type="number" inputmode="numeric" placeholder="Напр. 15" />
+    </div>
+    <button id="divideBtn">Посчитать</button>
+    <div id="divisionResult" class="divider-result" aria-live="polite">Результат появится здесь</div>
+  </div>
+
+  <script>
+    const preload = __PRELOAD__;
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+    const status = document.getElementById('status');
+    const renderState = document.getElementById('renderState');
+    const clearBtn = document.getElementById('clearBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const sampleBtn = document.getElementById('sampleBtn');
+    const dividendInput = document.getElementById('dividend');
+    const divisorInput = document.getElementById('divisor');
+    const divideBtn = document.getElementById('divideBtn');
+    const divisionResult = document.getElementById('divisionResult');
+    const dividerWidget = document.getElementById('dividerWidget');
+    const dividerToggle = document.getElementById('dividerToggle');
+
+    const sampleLatex = __SAMPLE__;
+
+    function longDivide(dividend, divisor) {
+      const aStr = String(dividend ?? '').trim();
+      const bStr = String(divisor ?? '').trim();
+      if (!aStr || !bStr) return 'Введите оба числа';
+      if (!/^\d+$/.test(aStr) || !/^\d+$/.test(bStr)) return 'Только целые неотрицательные числа';
+
+      const b = Number(bStr);
+      if (b === 0) return 'Деление на ноль невозможно';
+
+      const digits = aStr.split('').map(Number);
+      let rem = 0;
+      let quotient = '';
+      const steps = [];
+
+      for (let i = 0; i < digits.length; i += 1) {
+        rem = rem * 10 + digits[i];
+        const qDigit = Math.floor(rem / b);
+        const prod = qDigit * b;
+        const newRem = rem - prod;
+        quotient += qDigit.toString();
+        steps.push({ idx: i, partial: rem, prod, remAfter: newRem });
+        rem = newRem;
+      }
+
+      const qStr = quotient.replace(/^0+(?=\d)/, '') || '0';
+      const startDiv = bStr.length + 3;
+
+      const top = ' '.repeat(startDiv + aStr.length - qStr.length) + qStr;
+      const mid = bStr + ' ) ' + aStr;
+      const bar = ' '.repeat(startDiv) + '┌' + '─'.repeat(Math.max(aStr.length, qStr.length)) + '┐';
+
+      const body = [];
+      steps.forEach((s) => {
+        const pos = startDiv + s.idx + 1;
+        const partialStr = String(s.partial);
+        const prodStr = String(s.prod);
+        const remStr = String(s.remAfter);
+
+        const partialLine = ' '.repeat(Math.max(0, pos - partialStr.length)) + partialStr;
+        const prodLine = ' '.repeat(Math.max(0, pos - prodStr.length - 1)) + '─' + prodStr;
+        const dashLen = Math.max(partialStr.length, prodStr.length);
+        const barLine = ' '.repeat(Math.max(0, pos - dashLen)) + '─'.repeat(dashLen);
+        const remLine = ' '.repeat(Math.max(0, pos - remStr.length)) + remStr;
+
+        body.push(partialLine, prodLine, barLine, remLine);
+      });
+
+      if (rem !== 0) {
+        body.push('Остаток: ' + rem);
+      }
+
+      return [top, mid, bar].concat(body).join('\n');
+    }
+
+    function setStatus(text) { status.textContent = text; }
+    function setRenderState(text) { renderState.textContent = text; }
+
+    function renderLatex(raw) {
+      const text = raw ?? '';
+      if (!text.trim()) {
+        output.textContent = 'Здесь появится рендер...';
+        output.classList.add('empty');
+        setRenderState('Пусто');
+        return;
+      }
+
+      output.classList.remove('empty');
+      output.textContent = '';
+      const lines = text.split(/\r?\n/);
+      for (const line of lines) {
+        const div = document.createElement('div');
+        div.textContent = line.length ? line : '\u00a0';
+        output.appendChild(div);
+      }
+      setRenderState('Рендер...');
+
+      if (!window.MathJax) {
+        setRenderState('MathJax не загрузился');
+        return;
+      }
+
+      if (typeof MathJax.typesetClear === 'function') {
+        MathJax.typesetClear([output]);
+      }
+
+      MathJax.typesetPromise([output]).then(() => {
+        setRenderState('Готово');
+      }).catch((err) => {
+        output.textContent = 'Ошибка: ' + err.message;
+        setRenderState('Ошибка');
+      });
+    }
+
+    function copyText() {
+      const value = input.value;
+      if (!value) {
+        setStatus('Нечего копировать');
+        return;
+      }
+      navigator.clipboard.writeText(value).then(() => setStatus('Скопировано'));
+    }
+
+    input.addEventListener('input', (e) => {
+      setStatus('Ввод...');
+      renderLatex(e.target.value);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      renderLatex('');
+      setStatus('Очищено');
+    });
+
+    copyBtn.addEventListener('click', copyText);
+
+    sampleBtn.addEventListener('click', () => {
+      input.value = sampleLatex;
+      renderLatex(sampleLatex);
+      setStatus('Загружен пример');
+    });
+
+    divideBtn.addEventListener('click', () => {
+      divisionResult.textContent = longDivide(dividendInput.value, divisorInput.value);
+    });
+
+    dividendInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        divideBtn.click();
+      }
+    });
+
+    divisorInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        divideBtn.click();
+      }
+    });
+
+    dividerToggle.addEventListener('click', () => {
+      const open = dividerWidget.classList.toggle('open');
+      dividerToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const initial = preload || '';
+      input.value = initial;
+      renderLatex(initial);
+    });
+  </script>
+</body>
+</html>
