@@ -53,6 +53,30 @@
       background: linear-gradient(120deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.08));
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
+    .notice {
+      border: 1px solid var(--border-strong);
+      background: rgba(56, 189, 248, 0.12);
+      color: #e0f2fe;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      box-shadow: var(--shadow);
+    }
+    .notice strong { color: #fff; font-weight: 700; letter-spacing: 0.2px; }
+    .notice-title { font-weight: 700; color: #fff; letter-spacing: 0.2px; }
+    .notice-text { color: #e0f2fe; line-height: 1.6; }
+    .notice code {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      color: #e0f2fe;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
     .grid { display: flex; flex-direction: column; gap: 18px; }
     .layout-top {
       display: grid;
@@ -198,11 +222,19 @@
 </head>
 <body>
   <div class="shell">
+    <div class="notice" role="note">
+      <div class="notice-title">Что такое LaTeX?</div>
+      <div class="notice-text">
+        Язык разметки для формул и научных текстов. Попробуй примеры:
+        <code>E = mc^2</code>,
+        <code>\\int_0^{\\infty} e^{-x^2} dx</code>.
+        Этот сервис переводит такие формулы в обычный текст
+      </div>
+    </div>
     <header>
       <h1>LaTeX2Text</h1>
       <span class="pill">Живой рендер • Темная тема</span>
     </header>
-
     <div class="grid">
       <div class="layout-top">
         <div class="card card-main input-card" aria-label="Ввод LaTeX">
@@ -210,7 +242,7 @@
             <h2>Ввод</h2>
             <span class="status" id="status">Готово</span>
           </header>
-          <textarea id="input" spellcheck="false" placeholder="Вставьте или введите LaTeX..."></textarea>
+          <textarea id="input" spellcheck="false" placeholder="Пример ввода: E = mc^2"></textarea>
           <div class="actions">
             <button id="clearBtn">Очистить</button>
             <button id="copyBtn">Скопировать текст</button>
