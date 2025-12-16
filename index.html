@@ -4,210 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>LaTeX2Text</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #070c16;
-      --bg-soft: #0c1527;
-      --panel: rgba(17, 26, 43, 0.85);
-      --border: rgba(148, 163, 184, 0.16);
-      --border-strong: rgba(56, 189, 248, 0.35);
-      --accent: #38bdf8;
-      --accent-strong: #0ea5e9;
-      --fg: #e5e7eb;
-      --subtle: #94a3b8;
-      --muted-strong: #cbd5e1;
-      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      --shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 2px 16px rgba(14, 165, 233, 0.15);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(900px at 20% 20%, rgba(56, 189, 248, 0.15), transparent 45%),
-        radial-gradient(700px at 80% 0%, rgba(14, 165, 233, 0.14), transparent 40%),
-        linear-gradient(135deg, #040811 0%, #0b1221 50%, #091123 100%);
-      color: var(--fg);
-      padding: 36px;
-      display: flex;
-      justify-content: center;
-      -webkit-font-smoothing: antialiased;
-    }
-    .shell {
-      width: 100%;
-      max-width: 1180px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-    header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-    h1 { margin: 0; font-size: 26px; letter-spacing: 0.6px; color: var(--muted-strong); }
-    .pill {
-      border: 1px solid var(--border);
-      color: var(--subtle);
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      background: linear-gradient(120deg, rgba(56, 189, 248, 0.1), rgba(14, 165, 233, 0.08));
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    }
-    .notice {
-      border: 1px solid var(--border-strong);
-      background: rgba(56, 189, 248, 0.12);
-      color: #e0f2fe;
-      padding: 14px 16px;
-      border-radius: 14px;
-      font-size: 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      box-shadow: var(--shadow);
-    }
-    .notice strong { color: #fff; font-weight: 700; letter-spacing: 0.2px; }
-    .notice-title { font-weight: 700; color: #fff; letter-spacing: 0.2px; }
-    .notice-text { color: #e0f2fe; line-height: 1.6; }
-    .notice code {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 2px 6px;
-      border-radius: 8px;
-      font-family: var(--mono);
-      color: #e0f2fe;
-      border: 1px solid rgba(56, 189, 248, 0.35);
-    }
-    .grid { display: flex; flex-direction: column; gap: 18px; }
-    .layout-top {
-      display: grid;
-      grid-template-columns: 3fr 1fr;
-      gap: 18px;
-      align-items: stretch;
-      width: 100%;
-    }
-    .card {
-      background: linear-gradient(180deg, rgba(17, 24, 39, 0.92), rgba(10, 16, 32, 0.9));
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-      backdrop-filter: blur(12px);
-    }
-    .card header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .card h2 { margin: 0; font-size: 16px; color: #e2e8f0; letter-spacing: 0.3px; }
-    textarea {
-      width: 100%;
-      min-height: 280px;
-      resize: vertical;
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: linear-gradient(145deg, rgba(10, 16, 32, 0.95), rgba(13, 22, 41, 0.85));
-      color: var(--fg);
-      font-family: var(--mono);
-      font-size: 14px;
-      line-height: 1.55;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    }
-    textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22);
-      transform: translateY(-1px);
-    }
-    .output {
-      min-height: 280px;
-      padding: 16px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: linear-gradient(160deg, rgba(10, 16, 32, 0.95), rgba(11, 19, 35, 0.9));
-      color: var(--fg);
-      font-size: 16px;
-      line-height: 1.7;
-      overflow: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
-      flex: 1;
-      min-height: 0;
-    }
-    .output.empty { color: var(--subtle); }
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    button {
-      border: 1px solid var(--border);
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.2));
-      color: var(--fg);
-      padding: 9px 13px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      display: inline-flex;
-      gap: 6px;
-      align-items: center;
-      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 10px 30px rgba(14, 165, 233, 0.18);
-    }
-    button:hover {
-      border-color: var(--border-strong);
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.32), rgba(14, 165, 233, 0.3));
-      transform: translateY(-1px);
-      box-shadow: 0 14px 36px rgba(14, 165, 233, 0.22);
-    }
-    button:active { transform: translateY(0); box-shadow: 0 6px 18px rgba(14, 165, 233, 0.15); }
-    .muted { color: var(--subtle); font-size: 13px; }
-    .status { font-size: 13px; color: var(--subtle); }
-    .tools { display: flex; flex-direction: column; gap: 12px; }
-    .toggles { display: flex; gap: 12px; flex-wrap: wrap; }
-    .toggles label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--subtle); cursor: pointer; padding: 6px 10px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255, 255, 255, 0.02); }
-    .stats { font-size: 13px; color: var(--muted-strong); }
-    .snippets { display: flex; flex-wrap: wrap; gap: 8px; }
-    .chip {
-      border-radius: 999px;
-      padding: 7px 11px;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      color: #e0f2fe;
-      font-size: 13px;
-      cursor: pointer;
-      transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-      box-shadow: 0 8px 22px rgba(56, 189, 248, 0.18);
-    }
-    .chip:hover { transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 10px 26px rgba(56, 189, 248, 0.22); }
-    .dropzone {
-      border: 1px dashed var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      text-align: center;
-      color: var(--subtle);
-      background: rgba(56, 189, 248, 0.05);
-      transition: border-color 0.2s ease, background 0.2s ease, transform 0.12s ease;
-    }
-    .dropzone.active {
-      border-color: var(--accent);
-      background: rgba(56, 189, 248, 0.1);
-      color: #e0f2fe;
-      transform: translateY(-1px);
-    }
-    .input-card textarea { flex: 1; min-height: 60vh; }
-    .output-card .output { min-height: 60vh; }
-    @media (max-width: 1024px) {
-      .layout-top { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 800px) {
-      body { padding: 24px; }
-      .shell { gap: 18px; }
-    }
-    @media (max-width: 640px) {
-      body { padding: 18px; }
-      .input-card textarea, .output-card .output { min-height: 240px; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
   <script>
     window.MathJax = {
       tex: {
@@ -235,6 +32,9 @@
       <h1>LaTeX2Text</h1>
       <span class="pill">Живой рендер • Темная тема</span>
     </header>
+    <div class="top-actions actions">
+      <button id="openDivision">Деление в столбик</button>
+    </div>
     <div class="grid">
       <div class="layout-top">
         <div class="card card-main input-card" aria-label="Ввод LaTeX">
@@ -287,6 +87,42 @@
     <span class="muted">MathJax рендерит формулы прямо в браузере, ничего не отправляется на сервер.</span>
   </div>
 
+  <div id="divisionModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="divisionTitle">
+      <div class="division-card">
+        <div class="division-header">
+          <h3 id="divisionTitle">Деление в столбик</h3>
+          <button id="closeDivision" class="icon-btn" aria-label="Закрыть окно">✕</button>
+        </div>
+        <div class="division-inputs">
+          <label>Делимое
+            <input id="divisionDividend" type="text" inputmode="numeric" autocomplete="off" value="1449" />
+          </label>
+          <label>Делитель
+            <input id="divisionDivisor" type="text" inputmode="numeric" autocomplete="off" value="23" />
+          </label>
+        </div>
+        <div class="division-layout">
+          <div class="division-labels">
+            <span>Делимое</span>
+            <span class="label-right">Делитель</span>
+            <span class="label-quotient">Частное</span>
+          </div>
+          <div class="division-work">
+            <div class="division-lines" id="divisionLines"></div>
+            <div class="division-divider"></div>
+            <div class="division-right">
+              <div id="divisionDivisorDisplay" class="division-number"></div>
+              <div id="divisionQuotientDisplay" class="division-number subtle"></div>
+            </div>
+          </div>
+          <div class="division-note" id="divisionNote"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const preload = '';
     const input = document.getElementById('input');
@@ -308,6 +144,15 @@
     const fileInput = document.getElementById('fileInput');
     const snippets = document.getElementById('snippets');
     const dropzone = document.getElementById('dropzone');
+    const openDivisionBtn = document.getElementById('openDivision');
+    const divisionModal = document.getElementById('divisionModal');
+    const closeDivisionBtn = document.getElementById('closeDivision');
+    const divisionDividend = document.getElementById('divisionDividend');
+    const divisionDivisor = document.getElementById('divisionDivisor');
+    const divisionLines = document.getElementById('divisionLines');
+    const divisionDivisorDisplay = document.getElementById('divisionDivisorDisplay');
+    const divisionQuotientDisplay = document.getElementById('divisionQuotientDisplay');
+    const divisionNote = document.getElementById('divisionNote');
     const sampleLatex = `E = mc^2
 \\int_0^{\\infty} e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}
 \\textbf{Матрица: }\\begin{bmatrix}1 & 0 \\\\ 0 & 1\\end{bmatrix}`;
@@ -350,6 +195,66 @@
       return saved;
     }
 
+    function clampDigits(value) {
+      return (value || '').replace(/[^\d]/g, '');
+    }
+
+    function computeLongDivision(dividend, divisor) {
+      if (!Number.isInteger(dividend) || !Number.isInteger(divisor)) {
+        return { error: 'Используйте целые числа' };
+      }
+      if (divisor === 0) return { error: 'Деление на ноль запрещено' };
+      if (dividend < 0 || divisor < 0) return { error: 'Только неотрицательные числа' };
+
+      const digits = String(dividend).split('').map((d) => Number(d));
+      let idx = 0;
+      let chunk = digits[0];
+      while (chunk < divisor && idx < digits.length - 1) {
+        idx += 1;
+        chunk = chunk * 10 + digits[idx];
+      }
+
+      const lines = [{ text: `_${dividend}`, indent: 0 }];
+
+      if (chunk < divisor) {
+        return { quotient: '0', remainder: dividend, lines };
+      }
+
+      const baseOffset = 1; // смещение, чтобы игнорировать подчёркивание
+      let startPos = idx - String(chunk).length + 1;
+      const quotientParts = [];
+
+      for (let i = idx; i < digits.length; i += 1) {
+        const q = Math.floor(chunk / divisor);
+        quotientParts.push(q);
+        const product = q * divisor;
+        const chunkLen = String(chunk).length;
+        const productLen = String(product).length;
+
+        const productIndent = baseOffset + startPos + Math.max(0, chunkLen - productLen) + 1;
+        lines.push({ text: String(product), indent: productIndent });
+
+        chunk -= product;
+        const isLast = i === digits.length - 1;
+
+        if (isLast) {
+          const remainderLen = String(chunk).length;
+          const remainderIndent = baseOffset + startPos + Math.max(0, chunkLen - remainderLen) + 1;
+          lines.push({ text: String(chunk), indent: remainderIndent });
+          break;
+        }
+
+        // переносим следующую цифру
+        chunk = chunk * 10 + digits[i + 1];
+        startPos += 1;
+        lines.push({ text: `_${chunk}`, indent: baseOffset + startPos });
+      }
+
+      const quotient = quotientParts.join('').replace(/^0+(?=\\d)/, '') || '0';
+      const remainder = chunk;
+      return { quotient, remainder, lines };
+    }
+
     function renderLatex(raw) {
       const text = normalizeLatexClient(raw);
       if (!text.trim()) {
@@ -360,7 +265,7 @@
       }
 
       output.classList.remove('empty');
-      output.textContent = text;
+      output.innerHTML = text.split('\n').map(line => `<div>${line || '<br>'}</div>`).join('');
       setRenderState('Рендер...');
 
       if (!window.MathJax) {
@@ -486,6 +391,64 @@
       });
     }
 
+    function renderDivision() {
+      const cleanDividend = clampDigits(divisionDividend.value);
+      const cleanDivisor = clampDigits(divisionDivisor.value);
+      divisionDividend.value = cleanDividend;
+      divisionDivisor.value = cleanDivisor;
+
+      divisionLines.innerHTML = '';
+      divisionNote.textContent = '';
+      divisionNote.classList.remove('error');
+
+      if (!cleanDividend || !cleanDivisor) {
+        divisionDivisorDisplay.textContent = cleanDivisor || '—';
+        divisionQuotientDisplay.textContent = '—';
+        divisionLines.innerHTML = '<div class="division-line" style="color: #7b8090; font-size: 18px;">Введите делимое и делитель</div>';
+        return;
+      }
+
+      const dividend = Number.parseInt(cleanDividend, 10);
+      const divisor = Number.parseInt(cleanDivisor, 10);
+
+      const result = computeLongDivision(dividend, divisor);
+
+      if (result.error) {
+        divisionNote.textContent = result.error;
+        divisionNote.classList.add('error');
+        divisionDivisorDisplay.textContent = cleanDivisor;
+        divisionQuotientDisplay.textContent = '—';
+        return;
+      }
+
+      const { quotient, remainder, lines } = result;
+
+      divisionDivisorDisplay.textContent = cleanDivisor;
+      divisionQuotientDisplay.textContent = remainder === 0 ? quotient : (dividend / divisor).toFixed(2);
+
+      lines.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'division-line';
+        row.textContent = item.text;
+        row.style.marginLeft = `${item.indent}ch`;
+        divisionLines.appendChild(row);
+      });
+
+      divisionNote.textContent = remainder ? `Остаток: ${remainder}` : 'Остаток: 0';
+    }
+
+    function openDivision() {
+      divisionModal.classList.add('open');
+      divisionModal.setAttribute('aria-hidden', 'false');
+      renderDivision();
+      setTimeout(() => divisionDividend.focus(), 20);
+    }
+
+    function closeDivision() {
+      divisionModal.classList.remove('open');
+      divisionModal.setAttribute('aria-hidden', 'true');
+    }
+
     input.addEventListener('input', (e) => {
       handleInput(e.target.value);
     });
@@ -535,6 +498,21 @@
       fileInput.value = '';
     });
 
+    openDivisionBtn.addEventListener('click', openDivision);
+    closeDivisionBtn.addEventListener('click', closeDivision);
+    divisionModal.addEventListener('click', (e) => {
+      if (e.target === divisionModal || e.target.classList.contains('modal-backdrop')) {
+        closeDivision();
+      }
+    });
+    divisionDividend.addEventListener('input', renderDivision);
+    divisionDivisor.addEventListener('input', renderDivision);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && divisionModal.classList.contains('open')) {
+        closeDivision();
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
       const restored = restoreSaved();
       const initial = preload || restored || '';
@@ -547,6 +525,7 @@
       }
       setupSnippets();
       setupDropzone();
+      renderDivision();
     });
   </script>
 </body>
