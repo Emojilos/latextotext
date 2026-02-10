@@ -165,7 +165,7 @@
     function normalizeLatexClient(value) {
       const trimmed = (value ?? '').trim();
       if (!trimmed) return '';
-      const markers = ['\\(', '\\)', '$$', '\\[', '\\]'];
+      const markers = ['$', '\\(', '\\)', '$$', '\\[', '\\]'];
       if (markers.some((marker) => trimmed.includes(marker))) return trimmed;
       return `$$\n${trimmed}\n$$`;
     }
@@ -231,7 +231,7 @@
         const chunkLen = String(chunk).length;
         const productLen = String(product).length;
 
-        const productIndent = baseOffset + startPos + Math.max(0, chunkLen - productLen) + 1;
+        const productIndent = baseOffset + startPos + Math.max(0, chunkLen - productLen);
         lines.push({ text: String(product), indent: productIndent });
 
         chunk -= product;
@@ -239,7 +239,7 @@
 
         if (isLast) {
           const remainderLen = String(chunk).length;
-          const remainderIndent = baseOffset + startPos + Math.max(0, chunkLen - remainderLen) + 1;
+          const remainderIndent = baseOffset + startPos + Math.max(0, chunkLen - remainderLen);
           lines.push({ text: String(chunk), indent: remainderIndent });
           break;
         }
@@ -250,7 +250,7 @@
         lines.push({ text: `_${chunk}`, indent: baseOffset + startPos });
       }
 
-      const quotient = quotientParts.join('').replace(/^0+(?=\\d)/, '') || '0';
+      const quotient = quotientParts.join('').replace(/^0+(?=\d)/, '') || '0';
       const remainder = chunk;
       return { quotient, remainder, lines };
     }
