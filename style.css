@@ -188,150 +188,6 @@ button:active { transform: translateY(0); box-shadow: 0 6px 18px rgba(14, 165, 2
   color: #e0f2fe;
   transform: translateY(-1px);
 }
-.top-actions { display: flex; justify-content: flex-end; }
-.modal {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 32px 14px;
-  z-index: 900;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.18s ease;
-}
-.modal.open { opacity: 1; pointer-events: auto; }
-.modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(900px at 20% 20%, rgba(56, 189, 248, 0.12), transparent 50%);
-  pointer-events: none;
-}
-.modal-dialog {
-  position: relative;
-  z-index: 1;
-  width: min(820px, 96vw);
-  pointer-events: auto;
-  filter: drop-shadow(0 18px 50px rgba(0, 0, 0, 0.45));
-  margin-top: 8px;
-}
-.division-card {
-  background: linear-gradient(180deg, rgba(17, 24, 39, 0.96), rgba(10, 16, 32, 0.9));
-  color: var(--fg);
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  padding: 18px 20px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  backdrop-filter: blur(12px);
-}
-.division-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.division-header h3 {
-  margin: 0;
-  font-size: 20px;
-  color: var(--accent);
-  letter-spacing: 0.2px;
-}
-.icon-btn {
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--subtle);
-  border-radius: 10px;
-  padding: 8px 10px;
-  cursor: pointer;
-  transition: border 0.15s ease, transform 0.12s ease, color 0.15s ease;
-}
-.icon-btn:hover { border-color: var(--border-strong); color: #fff; transform: translateY(-1px); }
-.division-inputs {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 12px;
-}
-.division-inputs label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--subtle);
-  letter-spacing: 0.1px;
-}
-.division-inputs input {
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: linear-gradient(145deg, rgba(10, 16, 32, 0.95), rgba(13, 22, 41, 0.85));
-  font-size: 18px;
-  color: var(--fg);
-  outline: none;
-  transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
-  font-family: var(--mono);
-}
-.division-inputs input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22);
-  transform: translateY(-1px);
-}
-.division-layout { display: grid; grid-template-columns: 1fr; gap: 12px; }
-.division-labels {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: end;
-  column-gap: 18px;
-  font-size: 14px;
-  color: var(--subtle);
-  letter-spacing: 0.1px;
-}
-.division-labels .label-right { margin-right: 6px; }
-.division-labels .label-quotient { justify-self: end; }
-.division-work {
-  display: grid;
-  grid-template-columns: 1fr 2px 140px;
-  column-gap: 12px;
-  align-items: flex-start;
-}
-.division-divider {
-  width: 2px;
-  background: var(--border);
-  border-radius: 4px;
-  min-height: 210px;
-}
-.division-lines {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 6px;
-  font-family: var(--mono);
-  color: #e91e63;
-  font-size: 32px;
-  line-height: 1.15;
-  min-height: 220px;
-}
-.division-line { white-space: pre; }
-.division-right {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding-top: 4px;
-}
-.division-number {
-  font-family: var(--mono);
-  font-size: 32px;
-  color: #e91e63;
-  line-height: 1.1;
-}
-.division-number.subtle { color: #c2185b; }
-.division-note { font-size: 14px; color: var(--subtle); }
-.division-note.error { color: #c62828; }
 .input-card textarea { flex: 1; min-height: 60vh; }
 .output-card .output { min-height: 60vh; }
 @media (max-width: 1024px) {
@@ -360,15 +216,6 @@ button:active { transform: translateY(0); box-shadow: 0 6px 18px rgba(14, 165, 2
   .snippets { gap: 6px; }
   .chip { padding: 5px 9px; font-size: 12px; }
   .dropzone { padding: 10px; font-size: 13px; border-radius: 10px; }
-  .division-work { grid-template-columns: 1fr 2px 100px; column-gap: 8px; }
-  .division-lines { font-size: 22px; min-height: 160px; gap: 6px; }
-  .division-number { font-size: 22px; }
-  .division-divider { min-height: 160px; }
-  .division-card { padding: 14px; border-radius: 14px; gap: 10px; }
-  .division-header h3 { font-size: 17px; }
-  .division-inputs input { padding: 10px 12px; font-size: 16px; }
-  .modal { padding: 16px 8px; }
-  .modal-dialog { width: min(820px, 100vw - 16px); }
 }
 @media (max-width: 380px) {
   body { padding: 8px; }
@@ -380,7 +227,4 @@ button:active { transform: translateY(0); box-shadow: 0 6px 18px rgba(14, 165, 2
   textarea { min-height: 150px; font-size: 12px; }
   .actions { gap: 4px; }
   button { padding: 7px 8px; font-size: 11px; }
-  .division-lines { font-size: 18px; }
-  .division-number { font-size: 18px; }
-  .division-work { grid-template-columns: 1fr 2px 80px; }
 }
