@@ -15,7 +15,7 @@
       svg: { fontCache: 'global' }
     };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 </head>
 <body>
   <div class="shell">
@@ -24,7 +24,7 @@
       <div class="notice-text">
         Язык разметки для формул и научных текстов. Попробуй примеры:
         <code>E = mc^2</code>,
-        <code>\\int_0^{\\infty} e^{-x^2} dx</code>.
+        <code>\int_0^{\\infty} e^{-x^2} dx</code>.
         Этот сервис переводит такие формулы в обычный текст
       </div>
     </div>
@@ -147,6 +147,8 @@
       return saved;
     }
 
+    let renderTimer = null;
+
     function renderLatex(raw) {
       const text = normalizeLatexClient(raw);
       if (!text.trim()) {
@@ -157,11 +159,16 @@
       }
 
       output.classList.remove('empty');
-      output.innerHTML = text.split('\n').map(line => `<div>${line || '<br>'}</div>`).join('');
+      output.textContent = '';
+      const container = document.createElement('div');
+      container.textContent = text;
+      output.appendChild(container);
       setRenderState('Рендер...');
 
-      if (!window.MathJax) {
-        setRenderState('MathJax не загрузился');
+      if (typeof MathJax === 'undefined' || typeof MathJax.typesetPromise !== 'function') {
+        setRenderState('MathJax загружается...');
+        clearTimeout(renderTimer);
+        renderTimer = setTimeout(() => renderLatex(raw), 300);
         return;
       }
 
