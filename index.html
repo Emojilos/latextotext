@@ -125,9 +125,11 @@
     function normalizeLatexClient(value) {
       const trimmed = (value ?? '').trim();
       if (!trimmed) return '';
+      // Escape unescaped # (not preceded by \)
+      const escaped = trimmed.replace(/(^|[^\\])#/g, '$1\\#');
       const markers = ['$', '\\(', '\\)', '$$', '\\[', '\\]'];
-      if (markers.some((marker) => trimmed.includes(marker))) return trimmed;
-      return `$$\n${trimmed}\n$$`;
+      if (markers.some((marker) => escaped.includes(marker))) return escaped;
+      return `$$\n${escaped}\n$$`;
     }
 
     function updateStats(text) {
