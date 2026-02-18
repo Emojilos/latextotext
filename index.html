@@ -45,6 +45,7 @@
             <button id="copyBtn">Скопировать текст</button>
             <button id="sampleBtn">Пример</button>
             <button id="renderBtn">Рендер</button>
+            <button id="shareBtn">Поделиться</button>
           </div>
         </div>
 
@@ -66,7 +67,11 @@
               <button id="loadFile">Загрузить файл</button>
               <input id="fileInput" type="file" accept=".tex,.txt,text/plain" hidden />
             </div>
-            <div class="snippets" id="snippets"></div>
+            <div class="snippets-toggle" id="snippetsToggle">
+              <span>Сниппеты</span>
+              <span class="arrow" id="snippetsArrow">▶</span>
+            </div>
+            <div class="snippets" id="snippets" style="display:none"></div>
             <div class="dropzone" id="dropzone">Перетащи .tex или .txt сюда</div>
           </div>
         </div>
@@ -104,6 +109,9 @@
     const loadFile = document.getElementById('loadFile');
     const fileInput = document.getElementById('fileInput');
     const snippets = document.getElementById('snippets');
+    const snippetsToggle = document.getElementById('snippetsToggle');
+    const snippetsArrow = document.getElementById('snippetsArrow');
+    const shareBtn = document.getElementById('shareBtn');
     const dropzone = document.getElementById('dropzone');
     const sampleLatex = `E = mc^2
 \\int_0^{\\infty} e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}
@@ -202,6 +210,13 @@
         return;
       }
       navigator.clipboard.writeText(value).then(() => setStatus('Скопировано'));
+    }
+
+    function shareLink() {
+      const value = input.value;
+      const encoded = btoa(unescape(encodeURIComponent(value)));
+      const url = location.origin + location.pathname + '?q=' + encoded;
+      navigator.clipboard.writeText(url).then(() => setStatus('Ссылка скопирована'));
     }
 
     function copyOutput() {
@@ -332,6 +347,15 @@
     downloadTex.addEventListener('click', () => download('tex'));
     downloadTxt.addEventListener('click', () => download('txt'));
 
+    shareBtn.addEventListener('click', shareLink);
+
+    snippetsToggle.addEventListener('click', () => {
+      const isHidden = snippets.style.display === 'none';
+      snippets.style.display = isHidden ? 'flex' : 'none';
+      snippetsArrow.textContent = isHidden ? '▼' : '▶';
+      snippetsArrow.style.transform = isHidden ? 'rotate(0deg)' : '';
+    });
+
     loadFile.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files?.[0];
@@ -341,7 +365,13 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const restored = restoreSaved();
-      const initial = preload || restored || '';
+      const params = new URLSearchParams(location.search);
+      const qParam = params.get('q');
+      let fromUrl = '';
+      if (qParam) {
+        try { fromUrl = decodeURIComponent(escape(atob(qParam))); } catch(e) {}
+      }
+      const initial = fromUrl || preload || restored || '';
       input.value = initial;
       updateStats(initial);
       if (autoRender.checked) {
