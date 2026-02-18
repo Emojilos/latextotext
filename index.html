@@ -7,10 +7,12 @@
   <link rel="stylesheet" href="style.css" />
   <script>
     window.MathJax = {
+      loader: { load: ['[tex]/noerrors'] },
       tex: {
         inlineMath: [['$', '$'], ['\\(', '\\)']],
         displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        processEscapes: true
+        processEscapes: true,
+        packages: { '[+]': ['noerrors'] }
       },
       svg: { fontCache: 'global' }
     };
@@ -126,10 +128,13 @@
       const trimmed = (value ?? '').trim();
       if (!trimmed) return '';
       // Escape unescaped # (not preceded by \)
-      const escaped = trimmed.replace(/(^|[^\\])#/g, '$1\\#');
-      const markers = ['$', '\\(', '\\)', '$$', '\\[', '\\]'];
+      const escaped = trimmed.replace(/(?<!\\)#/g, '\\#');
+      const markers = ['$', '\\(', '\\)', '\\[', '\\]'];
       if (markers.some((marker) => escaped.includes(marker))) return escaped;
-      return `$$\n${escaped}\n$$`;
+      // No markers: wrap each non-empty line in its own display math block
+      return escaped.split(/\r?\n/)
+        .map(line => line.trim() ? `$$${line.trim()}$$` : '')
+        .join('\n');
     }
 
     function updateStats(text) {
